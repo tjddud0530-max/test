@@ -1,30 +1,69 @@
-const pickContactsBtn = document.getElementById('pickContactsBtn');
-const contactsResult = document.getElementById('contactsResult');
+// 1단계에서 발급받은 클라이언트 ID를 여기에 붙여넣으세요.
+const CLIENT_ID = 'YOUR_CLIENT_ID'; 
+const SCOPES = 'https://www.googleapis.com/auth/contacts.readonly';
 
-pickContactsBtn.addEventListener('click', async () => {
-    // Contact Picker API가 지원되는 브라우저인지 확인
-    if ('contacts' in navigator && 'select' in navigator.contacts) {
-        try {
-            // 요청할 연락처 정보 속성 정의 (이름, 이메일, 전화번호)
-            const props = ['name', 'email', 'tel'];
-            // 여러 연락처를 선택할 수 있도록 옵션 설정
-            const opts = { multiple: true };
+let tokenClient;
 
-            // 연락처 선택 창 열기
-            const contacts = await navigator.contacts.select(props, opts);
+function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+}
 
-            // 사용자가 연락처를 선택했는지 확인
-            if (contacts.length > 0) {
-                // 결과를 예쁘게 JSON 형식으로 변환하여 화면에 표시
-                contactsResult.textContent = JSON.stringify(contacts, null, 2);
-            } else {
-                contactsResult.textContent = '선택된 연락처가 없습니다.';
+async function initializeGapiClient() {
+    await gapi.client.init({
+        clientId: CLIENT_ID,
+        scope: SCOPES,
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/people/v1/rest'],
+    });
+}
+
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: (tokenResponse) => {
+            if (tokenResponse && tokenResponse.access_token) {
+                listContacts();
             }
-        } catch (error) {
-            // 사용자가 선택을 취소하거나 오류가 발생한 경우
-            contactsResult.textContent = `오류가 발생했습니다: ${error.message}`;
+        },
+    });
+}
+
+// 구글 로그인 성공 시 호출되는 함수
+function handleCredentialResponse(response) {
+    // People API에 대한 권한을 추가로 요청
+    tokenClient.requestAccessToken();
+}
+
+// 연락처 목록을 불러오는 함수
+async function listContacts() {
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = "<h2>연락처 목록:</h2>";
+    try {
+        const response = await gapi.client.people.people.connections.list({
+            resourceName: 'people/me',
+            personFields: 'names,emailAddresses,phoneNumbers',
+        });
+
+        const connections = response.result.connections;
+        if (connections && connections.length > 0) {
+            connections.forEach(person => {
+                const name = person.names && person.names.length > 0 ? person.names[0].displayName : '이름 없음';
+                const phone = person.phoneNumbers && person.phoneNumbers.length > 0 ? person.phoneNumbers[0].value : '전화번호 없음';
+                
+                const contactDiv = document.createElement('div');
+                contactDiv.className = 'contact';
+                contactDiv.innerHTML = `<div class="contact-name">${name}</div><div>${phone}</div>`;
+                resultDiv.appendChild(contactDiv);
+            });
+        } else {
+            resultDiv.innerHTML += '<p>연락처가 없습니다.</p>';
         }
-    } else {
-        contactsResult.textContent = '이 브라우저는 Contact Picker API를 지원하지 않습니다.';
+    } catch (err) {
+        resultDiv.innerHTML = `<p>오류 발생: ${err.message}</p>`;
     }
-});
+}
+
+// 스크립트 로딩을 위해 전역 콜백 함수로 노출
+window.gapiLoaded = gapiLoaded;
+window.gisLoaded = gisLoaded;
+window.handleCredentialResponse = handleCredentialResponse;
