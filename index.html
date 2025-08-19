@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Picker API 테스트</title>
+    <title>Google API 연락처 테스트</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>웹에서 연락처 불러오기 테스트</h1>
-    <p>아래 버튼을 누르면 기기의 주소록이 열립니다.</p>
-    <button id="pickContactsBtn">✅ 연락처 불러오기</button>
-    <h2>결과:</h2>
-    <pre id="contactsResult">아직 선택된 연락처가 없습니다.</pre>
+    <h1>Google 계정으로 연락처 불러오기</h1>
+    <div id="g_id_onload"
+         data-client_id="YOUR_CLIENT_ID" 
+         data-callback="handleCredentialResponse"
+         data-auto_select="true">
+    </div>
+    <div class="g_id_signin" data-type="standard"></div>
 
+    <div id="result"></div>
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
