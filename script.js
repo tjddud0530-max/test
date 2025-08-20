@@ -1,13 +1,6 @@
-// 1. Google Cloud Console에서 발급받은 클라이언트 ID를 여기에 붙여넣으세요.
+// Google Cloud Console에서 발급받은 클라이언트 ID를 여기에 붙여넣으세요.
 const CLIENT_ID = '1054924979449-k0csmdg3tji9ia6oo5mabrui9hal4pgf'; 
 const SCOPES = 'https://www.googleapis.com/auth/contacts.readonly';
-
-// 2. 당원 DB 리스트 (하드코딩)
-const partyMemberDB = [
-    { name: '유재권', phone: '01074010329' },
-    { name: '임준석', phone: '010-3974-1899' },
-    { name: '부동산', phone: '+821086706522' }
-];
 
 let tokenClient;
 let gapiClientInitialized = false;
@@ -24,6 +17,11 @@ function normalizePhoneNumber(phone) {
 }
 
 // 미리 당원 DB의 전화번호를 정규화 해둡니다.
+const partyMemberDB = [
+    { name: '유재권', phone: '01074010329' },
+    { name: '임준석', phone: '010-3974-1899' },
+    { name: '부동산', phone: '+821086706522' }
+];
 const normalizedPartyDB = partyMemberDB.map(member => ({
     ...member,
     normalizedPhone: normalizePhoneNumber(member.phone)
@@ -54,6 +52,13 @@ function gisLoaded() {
                 fetchContacts();
             }
         },
+    });
+    
+    // FedCM UI가 아닌, 기존 팝업 방식을 사용하도록 명시합니다.
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: handleCredentialResponse,
+      use_fedcm_for_prompt: false 
     });
 }
 
