@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Google API 연락처 테스트</title>
+    <title>연락처 매칭 테스트</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Google 계정으로 연락처 불러오기</h1>
+    <p>Google 계정으로 로그인하면 연락처를 불러와 당원과 비교할 수 있습니다.</p>
+    
     <div id="g_id_onload"
          data-client_id="1054924979449-k0csmdg3tji9ia6oo5mabrui9hal4pgf" 
          data-callback="handleCredentialResponse"
-         data-auto_select="true">
+         data-auto_select="false">
     </div>
     <div class="g_id_signin" data-type="standard"></div>
 
-    <div id="result"></div>
+    <div id="main-content" style="display: none;">
+        <hr>
+        <p>"저장한 이름과 상관없이 휴대폰 번호만 사용됩니다."</p>
+        <button id="find-button">당원 찾기</button>
+    </div>
+
+    <div id="results-container">
+        <div id="politician-view"></div>
+        <div id="supporter-view"></div>
+    </div>
     
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script src="script.js"></script>
 </body>
 </html>
-
