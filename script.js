@@ -1,5 +1,5 @@
 // 1단계에서 발급받은 클라이언트 ID를 여기에 붙여넣으세요.
-const CLIENT_ID = '1054924979449-k0csmdg3tji9ia6o5mabrui9hal4pgf';
+const CLIENT_ID = '1054924979449-k0csmdg3tji9ia6oo5mabrui9hal4pgf'; 
 const SCOPES = 'https://www.googleapis.com/auth/contacts.readonly';
 
 let tokenClient;
@@ -62,10 +62,3 @@ async function listContacts() {
         resultDiv.innerHTML = `<p>오류 발생: ${err.message}</p>`;
     }
 }
-
-// 스크립트 로딩을 위해 전역 콜백 함수로 노출
-window.gapiLoaded = gapiLoaded;
-window.gisLoaded = gisLoaded;
-window.handleCredentialResponse = handleCredentialResponse;
-
-
