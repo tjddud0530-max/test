@@ -1,8 +1,8 @@
-// 1단계에서 발급받은 클라이언트 ID를 여기에 붙여넣으세요.
 const CLIENT_ID = '1054924979449-k0csmdg3tji9ia6oo5mabrui9hal4pgf'; 
 const SCOPES = 'https://www.googleapis.com/auth/contacts.readonly';
 
 let tokenClient;
+let gapiClientInitialized = false; // gapi 초기화 상태를 추적하는 변수 추가
 
 function gapiLoaded() {
     gapi.load('client', initializeGapiClient);
@@ -14,6 +14,7 @@ async function initializeGapiClient() {
         scope: SCOPES,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/people/v1/rest'],
     });
+    gapiClientInitialized = true; // 초기화 완료 상태로 변경
 }
 
 function gisLoaded() {
@@ -30,8 +31,13 @@ function gisLoaded() {
 
 // 구글 로그인 성공 시 호출되는 함수
 function handleCredentialResponse(response) {
-    // People API에 대한 권한을 추가로 요청
-    tokenClient.requestAccessToken();
+    // gapi.client가 초기화될 때까지 기다렸다가 다음을 실행
+    const checkGapiClient = setInterval(() => {
+        if (gapiClientInitialized) {
+            clearInterval(checkGapiClient);
+            tokenClient.requestAccessToken();
+        }
+    }, 100); // 0.1초마다 확인
 }
 
 // 연락처 목록을 불러오는 함수
