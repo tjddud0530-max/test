@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-client-id" content="1054924979449-k0csmdg3tji9ia6oo5mabrui9hal4pgf.apps.googleusercontent.com">
+    <title>Google 로그인 및 연락처 가져오기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Google 연동 테스트</h1>
+        <p>Google 계정으로 로그인하고 연락처 정보를 가져옵니다.</p>
+        
+        <button id="loginBtn">🚀 Google 로그인</button>
+        <button id="logoutBtn" style="display:none;">🔒 로그아웃</button>
+        <button id="getContactsBtn" style="display:none;">👤 연락처 가져오기</button>
+        
+        <h3 id="welcomeMsg" style="display:none;"></h3>
+        <pre id="contacts-container"></pre>
+    </div>
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <script src="script.js"></script>
+</body>
+</html>
